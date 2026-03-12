@@ -23,6 +23,12 @@ void Handle_Input(Player* player){
     player->isGrounded = false;
     player->state = jumping;
   }
+
+  if(IsKeyReleased(KEY_SPACE) && !player->isGrounded){
+    if(player->velocity.y < -4.0){
+      player->velocity.y = -4.0f;
+    } 
+  }
   if (IsKeyDown(KEY_D)){
     if(player->velocity.x <0){
       player->velocity.x += player->deceleration;
