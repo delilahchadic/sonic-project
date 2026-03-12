@@ -9,6 +9,7 @@ Player Player_Init(){
   player.frame = 0;
   player.frameTimer = 0.0f;
   player.state = idle;
+  player.maxSpeed = 6.0f;
   return player;
 }
 
@@ -19,14 +20,23 @@ void Handle_Input(Player* player){
     player->isGrounded = false;
     player->state = jumping;
   }
-  if (IsKeyDown(KEY_D)) player->velocity.x += player->speed;
-  if (IsKeyDown(KEY_A)) player->velocity.x -= player->speed;
+  if (IsKeyDown(KEY_D)){
+    if(fabsf(player->velocity.x) < player->maxSpeed){
+      player->velocity.x += player->speed;
+    }
+  }
+   
+  if (IsKeyDown(KEY_A)) {
+    if(fabsf(player->velocity.x) < player->maxSpeed){
+      player->velocity.x -= player->speed;
+    }
+  }
 }
 
 //applies gravity then friction and then where sonic should be given his x and y velocity
 void Update_Physics(Player* player){ 
   if(!player->isGrounded){
-          player->velocity.y += player->gravity;
+    player->velocity.y += player->gravity;
   }
   if(player->velocity.x < 0){
     player->velocity.x += 0.016875f; 
