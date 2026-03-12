@@ -29,7 +29,10 @@ void Handle_Input(Player* player){
     }else if(fabsf(player->velocity.x) < player->maxSpeed){
       player->velocity.x += player->speed;
     }
-    player->lookingRight = true;
+    if(player->state != skidding && player->velocity.x > 0){
+      player->lookingRight = true;
+    }
+    
   }
    
   if (IsKeyDown(KEY_A)) {
@@ -38,7 +41,9 @@ void Handle_Input(Player* player){
     } else if(fabsf(player->velocity.x) < player->maxSpeed){
       player->velocity.x -= player->speed;
     }
-    player->lookingRight = false;
+    if(player->state != skidding && player->velocity.x < 0){
+      player->lookingRight = false;
+    }
   }
 }
 
@@ -99,10 +104,12 @@ void Set_Player_State(Player* player){
     bool pressingRight = IsKeyDown(KEY_D);
     if(pressingRight && player->velocity.x <0){
       player->state = skidding;
+      player->lookingRight = false;
       player->skidTimer = 0.5f;
       return;
     } else if(pressingLeft && player->velocity.x >0){
       player->state = skidding;
+      player->lookingRight = true;
       player->skidTimer = 0.5f;
       return;
     }

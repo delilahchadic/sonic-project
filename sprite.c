@@ -24,7 +24,7 @@ Rectangle Get_Sonic_Standby(bool lookingRight){
 }
 
 Rectangle Get_Sonic_Skidding(bool lookingRight){
-  float width = !lookingRight? 24.0: -24.0;
+  float width = lookingRight? 24.0: -24.0;
   float height = 32.0f;
   Rectangle r = {151,height+2,width,height};
     return r;
