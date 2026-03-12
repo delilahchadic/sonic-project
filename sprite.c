@@ -57,3 +57,11 @@ Rectangle Get_Sonic_Jumping(int frame){
   Rectangle r = {tl_pixel + index_width, 1, width-2,width-2};
   return r;
 }
+
+Rectangle Get_Sonic_Crouching(bool lookingRight){
+  float width = lookingRight? 24.0f : -24.0f;
+  int tl_pixel = 176;
+  
+  Rectangle r = {tl_pixel, 1, width,fabsf(width)};
+  return r;
+}

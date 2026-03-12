@@ -16,4 +16,5 @@ Rectangle Get_Sonic_Walking(int frame, bool lookingRight);  // returns the corre
 Rectangle Get_Sonic_Jumping(int frame);
 Rectangle Get_Sonic_Standby(bool lookingRight);
 Rectangle Get_Sonic_Skidding(bool lookingRight);
+Rectangle Get_Sonic_Crouching(bool lookingRight);
 #endif

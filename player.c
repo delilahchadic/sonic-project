@@ -29,7 +29,14 @@ void Handle_Input(Player* player){
       player->velocity.y = -4.0f;
     } 
   }
-  if (IsKeyDown(KEY_D)){
+
+  // if(IsKeyDown(KEY_S)){
+  //   if(fabsf(player->velocity.x) > 0.5f){
+  //     player->state = rolling;
+  //   }
+  // }
+  if(player->state != rolling && player->state != crouching){
+    if (IsKeyDown(KEY_D)){
     if(player->velocity.x <0){
       player->velocity.x += player->deceleration;
     }else if(fabsf(player->velocity.x) < player->maxSpeed){
@@ -51,6 +58,8 @@ void Handle_Input(Player* player){
       player->lookingRight = false;
     }
   }
+  }
+  
 }
 
 //applies gravity then friction and then where sonic should be given his x and y velocity
@@ -105,7 +114,19 @@ void Set_Player_State(Player* player){
     return;
   }
   float speed = fabsf(player->velocity.x);
+  
+  if(IsKeyDown(KEY_S)){
+    if(speed > 1.0){
+      player->state = rolling;
+      return;
+    } else{
+      player->state = crouching;
+      return;
+    }
+  }
+  
   if(speed >2.0){
+    
     bool pressingLeft = IsKeyDown(KEY_A);
     bool pressingRight = IsKeyDown(KEY_D);
     if(pressingRight && player->velocity.x <0){
@@ -161,6 +182,8 @@ AnimationRange Get_Animation_Range(Player* player){
     return (AnimationRange){6,9};
   case jumping:
     return (AnimationRange){10,14};
+  case rolling:
+    return (AnimationRange){10,14};
   default:
     return(AnimationRange) {0,0};
   }
@@ -193,6 +216,10 @@ Rectangle Get_Current_Animation(Player* player){
     return Get_Sonic_Jumping(player->frame);
   case skidding:
     return Get_Sonic_Skidding(player->lookingRight);
+  case rolling:
+    return Get_Sonic_Jumping(player->frame);
+  case crouching:
+    return Get_Sonic_Crouching(player->lookingRight);
   default:
     return (Rectangle){0};
   }
