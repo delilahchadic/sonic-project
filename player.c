@@ -7,6 +7,7 @@ Player Player_Init(){
   player.isGrounded = true;
   player.sprite = Get_Default_Sonic();
   player.frame = 0;
+  player.deceleration = 0.5f;
   player.frameTimer = 0.0f;
   player.state = idle;
   player.maxSpeed = 6.0f;
@@ -21,13 +22,17 @@ void Handle_Input(Player* player){
     player->state = jumping;
   }
   if (IsKeyDown(KEY_D)){
-    if(fabsf(player->velocity.x) < player->maxSpeed){
+    if(player->velocity.x <0){
+      player->velocity.x += player->deceleration;
+    }else if(fabsf(player->velocity.x) < player->maxSpeed){
       player->velocity.x += player->speed;
     }
   }
    
   if (IsKeyDown(KEY_A)) {
-    if(fabsf(player->velocity.x) < player->maxSpeed){
+    if(player->velocity.x > 0){
+      player->velocity.x -= player->deceleration;
+    } else if(fabsf(player->velocity.x) < player->maxSpeed){
       player->velocity.x -= player->speed;
     }
   }

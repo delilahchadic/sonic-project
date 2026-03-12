@@ -26,6 +26,7 @@ typedef struct {
     Sprite sprite;
     float speed;
     float maxSpeed;
+    float deceleration;
     float gravity;
     bool isGrounded;
     int frame;
