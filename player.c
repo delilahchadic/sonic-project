@@ -159,7 +159,6 @@ void Draw_Player(Player* player){
     player->position.x - (24 / 2.0f), 
     player->position.y - (33 / 2.0f) 
   };
-  bool runningLeft = !(player->velocity.x < -0.5);
 
   Rectangle r = Get_Current_Animation(player);
   DrawTextureRec(player->sprite.texture,r,position,WHITE);
@@ -169,7 +168,6 @@ void Draw_Player(Player* player){
 /// @param player 
 /// @return Rectangle containing the correct current sprite of sonic
 Rectangle Get_Current_Animation(Player* player){
-  bool runningLeft = !(player->velocity.x < -0.5);
   switch (player->state)
   {
   case idle:
