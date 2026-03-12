@@ -9,8 +9,10 @@ Player Player_Init(){
   player.frame = 0;
   player.deceleration = 0.5f;
   player.frameTimer = 0.0f;
+  player.skidTimer = 0.0f;
   player.state = idle;
   player.maxSpeed = 6.0f;
+  player.lookingRight = true;
   return player;
 }
 
@@ -27,6 +29,7 @@ void Handle_Input(Player* player){
     }else if(fabsf(player->velocity.x) < player->maxSpeed){
       player->velocity.x += player->speed;
     }
+    player->lookingRight = true;
   }
    
   if (IsKeyDown(KEY_A)) {
@@ -35,6 +38,7 @@ void Handle_Input(Player* player){
     } else if(fabsf(player->velocity.x) < player->maxSpeed){
       player->velocity.x -= player->speed;
     }
+    player->lookingRight = false;
   }
 }
 
@@ -85,10 +89,25 @@ void Set_Player_State(Player* player){
   if(!player->isGrounded){
     return;
   }
+  if(player->skidTimer >0.0f){
+    player->skidTimer -= GetFrameTime();
+    return;
+  }
   float speed = fabsf(player->velocity.x);
   if(speed >2.0){
+    bool pressingLeft = IsKeyDown(KEY_A);
+    bool pressingRight = IsKeyDown(KEY_D);
+    if(pressingRight && player->velocity.x <0){
+      player->state = skidding;
+      player->skidTimer = 0.5f;
+      return;
+    } else if(pressingLeft && player->velocity.x >0){
+      player->state = skidding;
+      player->skidTimer = 0.5f;
+      return;
+    }
     player->state =running;
-  } else if(speed > 0.1f){
+  } else if(speed > 0.2f){
     player->state = walking;
   } else{
     player->state = idle;
@@ -154,13 +173,15 @@ Rectangle Get_Current_Animation(Player* player){
   switch (player->state)
   {
   case idle:
-    return Get_Sonic_Standby();
+    return Get_Sonic_Standby(player->lookingRight);
   case walking:
-    return Get_Sonic_Walking(player->frame,runningLeft);
+    return Get_Sonic_Walking(player->frame,player->lookingRight);
   case running:
-    return Get_Sonic_Running(player->frame,runningLeft);
+    return Get_Sonic_Running(player->frame,player->lookingRight);
   case jumping:
     return Get_Sonic_Jumping(player->frame);
+  case skidding:
+    return Get_Sonic_Skidding(player->lookingRight);
   default:
     return (Rectangle){0};
   }

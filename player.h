@@ -12,6 +12,7 @@ typedef enum{
   running,
   jumping,
   crouching,
+  skidding,
   rolling
 } PlayerState;
 
@@ -29,8 +30,10 @@ typedef struct {
     float deceleration;
     float gravity;
     bool isGrounded;
+    bool lookingRight;
     int frame;
     float frameTimer;
+    float skidTimer;
     PlayerState state;
 } Player;
 
