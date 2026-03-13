@@ -1,5 +1,6 @@
 #include "sprite.h"
 #include <stdio.h>
+
 //provides a default Sprite struct
 // loads the sprites file and 
 // returns a sprite object to manage the texture file
@@ -15,6 +16,9 @@ Sprite Get_Default_Sonic(){
   return sonic;
 }
 
+/// @brief Get_Sonic_Standby
+/// @param lookingRight which direction sonic should be looking
+/// @return the rectangle from when sonic is not moving
 Rectangle Get_Sonic_Standby(bool lookingRight){
 
   float width = lookingRight? 24.0: -24.0;//runningLeft? 24.0: -24.0;
@@ -61,7 +65,49 @@ Rectangle Get_Sonic_Jumping(int frame){
 Rectangle Get_Sonic_Crouching(bool lookingRight){
   float width = lookingRight? 24.0f : -24.0f;
   int tl_pixel = 176;
-  
+
   Rectangle r = {tl_pixel, 1, width,fabsf(width)};
   return r;
+}
+
+/// @brief - returns the current animation by checking the state and rudimentary deciding if facing left or not
+/// @param player 
+/// @return Rectangle containing the correct current sprite of sonic
+Rectangle Get_Current_Animation(PlayerState state, int frame, bool lookingRight){
+  switch (state)
+  {
+  case idle:
+    return Get_Sonic_Standby(lookingRight);
+  case walking:
+    return Get_Sonic_Walking(frame,lookingRight);
+  case running:
+    return Get_Sonic_Running(frame,lookingRight);
+  case jumping:
+    return Get_Sonic_Jumping(frame);
+  case skidding:
+    return Get_Sonic_Skidding(lookingRight);
+  case rolling:
+    return Get_Sonic_Jumping(frame);
+  case crouching:
+    return Get_Sonic_Crouching(lookingRight);
+  default:
+    return (Rectangle){0};
+  }
+}
+
+// grabs the correct indices for the expected sprite ranges
+AnimationRange Get_Animation_Range(PlayerState state){
+  switch (state)
+  {
+  case walking:
+    return (AnimationRange){1,5};
+  case running:
+    return (AnimationRange){6,9};
+  case jumping:
+    return (AnimationRange){10,14};
+  case rolling:
+    return (AnimationRange){10,14};
+  default:
+    return(AnimationRange) {0,0};
+  }
 }

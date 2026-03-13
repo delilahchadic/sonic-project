@@ -4,22 +4,10 @@
 #include "raylib.h"
 #include "world.h"
 #include "sprite.h"
+#include "shared.h"
 #include <math.h>
 
-typedef enum{
-  idle,
-  walking,
-  running,
-  jumping,
-  crouching,
-  skidding,
-  rolling
-} PlayerState;
 
-typedef struct {
-  int start_frame;
-  int end_frame;
-} AnimationRange;
 
 typedef struct {
     Vector2 position;
@@ -44,8 +32,8 @@ void Update_Physics(Player* player);
 void Resolve_Collisions(Player* player, World* world);
 void Set_Player_State(Player* player);
 void Set_Frame(Player* player);
-Rectangle Get_Current_Animation(Player* player);
-AnimationRange Get_Animation_Range(Player* player);
+// Rectangle Get_Current_Animation(Player* player);
+// AnimationRange Get_Animation_Range(Player* player);
 
 
 void Draw_Player(Player* player);

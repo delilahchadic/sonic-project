@@ -1,4 +1,6 @@
 #include "player.h"
+
+// provides a default player object
 Player Player_Init(){
   Player player = { 0 };
   player.position = (Vector2){ 100,340 }; // Start in middle
@@ -18,46 +20,48 @@ Player Player_Init(){
 
 //handles move left, right and jump buttons
 void Handle_Input(Player* player){
+  // jump
   if (IsKeyPressed(KEY_SPACE) && player->isGrounded) {
     player->velocity.y -= 12.0f;
     player->isGrounded = false;
     player->state = jumping;
   }
-
+  //jump correction to implement short/quick jumps
   if(IsKeyReleased(KEY_SPACE) && !player->isGrounded){
     if(player->velocity.y < -4.0){
       player->velocity.y = -4.0f;
     } 
   }
 
-  // if(IsKeyDown(KEY_S)){
-  //   if(fabsf(player->velocity.x) > 0.5f){
-  //     player->state = rolling;
-  //   }
-  // }
+  //if the player is rolling or crouching then sonic cant move
   if(player->state != rolling && player->state != crouching){
+
+    // right input
     if (IsKeyDown(KEY_D)){
-    if(player->velocity.x <0){
-      player->velocity.x += player->deceleration;
-    }else if(fabsf(player->velocity.x) < player->maxSpeed){
-      player->velocity.x += player->speed;
+      //skids if turning
+      if(player->velocity.x <0){
+        player->velocity.x += player->deceleration;
+      }
+      //checks max speed other wise sonic will add speed to velocity
+      else if(fabsf(player->velocity.x) < player->maxSpeed){
+        player->velocity.x += player->speed;
+      }
+      // sonic points right when skid ends
+      if(player->state != skidding && player->velocity.x > 0){
+        player->lookingRight = true;
+      }
     }
-    if(player->state != skidding && player->velocity.x > 0){
-      player->lookingRight = true;
+    //left input
+    if (IsKeyDown(KEY_A)) {
+      if(player->velocity.x > 0){
+        player->velocity.x -= player->deceleration;
+      } else if(fabsf(player->velocity.x) < player->maxSpeed){
+        player->velocity.x -= player->speed;
+      }
+      if(player->state != skidding && player->velocity.x < 0){
+        player->lookingRight = false;
+      }
     }
-    
-  }
-   
-  if (IsKeyDown(KEY_A)) {
-    if(player->velocity.x > 0){
-      player->velocity.x -= player->deceleration;
-    } else if(fabsf(player->velocity.x) < player->maxSpeed){
-      player->velocity.x -= player->speed;
-    }
-    if(player->state != skidding && player->velocity.x < 0){
-      player->lookingRight = false;
-    }
-  }
   }
   
 }
@@ -156,7 +160,7 @@ void Set_Frame(Player* player){
     return;
   } 
   float speed = fabsf(player->velocity.x);
-  AnimationRange range = Get_Animation_Range(player);
+  AnimationRange range = Get_Animation_Range(player->state);
   
   if(player->frame < range.start_frame || player->frame >= range.end_frame){
     player ->frame = range.start_frame;
@@ -172,22 +176,7 @@ void Set_Frame(Player* player){
   return;
 }
 
-// grabs the correct indices for the expected sprite ranges
-AnimationRange Get_Animation_Range(Player* player){
-  switch (player->state)
-  {
-  case walking:
-    return (AnimationRange){1,5};
-  case running:
-    return (AnimationRange){6,9};
-  case jumping:
-    return (AnimationRange){10,14};
-  case rolling:
-    return (AnimationRange){10,14};
-  default:
-    return(AnimationRange) {0,0};
-  }
-}
+
 
 // determines where and what to draw and draws current player
 void Draw_Player(Player* player){
@@ -196,32 +185,9 @@ void Draw_Player(Player* player){
     player->position.y - (33 / 2.0f) 
   };
 
-  Rectangle r = Get_Current_Animation(player);
+  Rectangle r = Get_Current_Animation(player->state,player->frame, player->lookingRight);
   DrawTextureRec(player->sprite.texture,r,position,WHITE);
 }
 
-/// @brief - returns the current animation by checking the state and rudimentary deciding if facing left or not
-/// @param player 
-/// @return Rectangle containing the correct current sprite of sonic
-Rectangle Get_Current_Animation(Player* player){
-  switch (player->state)
-  {
-  case idle:
-    return Get_Sonic_Standby(player->lookingRight);
-  case walking:
-    return Get_Sonic_Walking(player->frame,player->lookingRight);
-  case running:
-    return Get_Sonic_Running(player->frame,player->lookingRight);
-  case jumping:
-    return Get_Sonic_Jumping(player->frame);
-  case skidding:
-    return Get_Sonic_Skidding(player->lookingRight);
-  case rolling:
-    return Get_Sonic_Jumping(player->frame);
-  case crouching:
-    return Get_Sonic_Crouching(player->lookingRight);
-  default:
-    return (Rectangle){0};
-  }
-}
+
 

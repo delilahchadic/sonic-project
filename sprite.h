@@ -3,6 +3,7 @@
 #include <stddef.h>  //
 #include <math.h>
 #include "raylib.h"
+#include "shared.h"
 typedef struct{
   char* file_name;
   // Image image;
@@ -17,4 +18,6 @@ Rectangle Get_Sonic_Jumping(int frame);
 Rectangle Get_Sonic_Standby(bool lookingRight);
 Rectangle Get_Sonic_Skidding(bool lookingRight);
 Rectangle Get_Sonic_Crouching(bool lookingRight);
+Rectangle Get_Current_Animation(PlayerState state, int frame, bool lookingRight);
+AnimationRange Get_Animation_Range(PlayerState state);
 #endif
