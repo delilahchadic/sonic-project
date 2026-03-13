@@ -5,7 +5,7 @@ LDFLAGS = -lraylib # Standard Linux Raylib flags
 
 # 2. Project Files
 # This finds all your .c files automatically!
-SOURCES = main.c player.c world.c camera.c sprite.c
+SOURCES = main.c player.c world.c camera.c sprite.c shared.c
 # This turns the .c list into a .o (object) list
 OBJS = $(SOURCES:.c=.o)
 # The name of your final game

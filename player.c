@@ -160,9 +160,15 @@ void Set_Frame(Player* player){
     return;
   } 
   float speed = fabsf(player->velocity.x);
+  bool rolling_backwards = player->state == rolling && !player->lookingRight;
   AnimationRange range = Get_Animation_Range(player->state);
   
-  if(player->frame < range.start_frame || player->frame >= range.end_frame){
+  if(rolling_backwards ){
+    if(player->frame < range.start_frame){
+      player ->frame = range.end_frame;
+    player->frameTimer = 0;
+    }
+  }else if(player->frame < range.start_frame || player->frame >= range.end_frame){
     player ->frame = range.start_frame;
     player->frameTimer = 0;
   }
@@ -170,7 +176,11 @@ void Set_Frame(Player* player){
   float animation_duration = 0.1f -(0.01f * speed) ;
   player->frameTimer += GetFrameTime();
   if(player->frameTimer > animation_duration){
-    player->frame++;
+    if(rolling_backwards){
+      player->frame--;
+    }else{
+      player->frame++;
+    }
     player->frameTimer = 0;
   }
   return;
